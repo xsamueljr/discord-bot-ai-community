@@ -1,0 +1,8 @@
+{
+    "SERVER_ID": 123,
+    "MAILBOX_ID": 345,
+    "categories": {
+        "category1": 567,
+        "category2": 890
+    }
+}

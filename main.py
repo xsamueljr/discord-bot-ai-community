@@ -1,5 +1,5 @@
 import os
-from asyncio import run
+import json
 
 from dotenv import load_dotenv
 from discord import (
@@ -86,24 +86,28 @@ async def hello(ctx, name: str = None) -> None:
 
 @bot.slash_command(name="aportar")
 async def send_apportation(ctx, category: Category, link: str, description: str) -> None:
+    """Usa el comando para contribuir a los recursos de la comunidad."""
+
+    description = description.strip()
     if len(description) not in range(10, 341):
         await ctx.send_response("La descripción debe tener entre 10 y 340 caracteres.", ephemeral=True)
         return
 
-    if not link.startswith(("https://", "http://")):
-        link = f"https://{link}"
-
-    
+    link = link.strip()
     if not is_valid_url(link):
         await ctx.send_response("El link no es válido.", ephemeral=True)
         return
 
     message = Embed(title="¡Nueva aportación!")
 
-    message.add_field(name="Autor", value=ctx.author.mention, inline=False)
-    message.add_field(name="Categoría", value=category.name, inline=False)
-    message.add_field(name="Link", value=link, inline=False)
-    message.add_field(name="Descripción", value=description, inline=False)
+    fields = [
+        ("Autor", ctx.author.mention),
+        ("Categoría", category.name),
+        ("Link", link),
+        ("Descripción", description)
+    ]
+    for name, value in fields:
+        message.add_field(name=name, value=value, inline=False)
 
     await mailbox_channel.send(embed=message, view=ApportationView())
     await ctx.send_response("Aportación enviada con éxito.", ephemeral=True)

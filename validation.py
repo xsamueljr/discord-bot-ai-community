@@ -1,7 +1,7 @@
 import re
 
 
-URL_PATTERN = re.compile(r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?")
+URL_PATTERN = re.compile(r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?")
 
 
 def is_valid_url(url: str) -> bool:
