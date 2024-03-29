@@ -1,8 +1,10 @@
 {
-    "SERVER_ID": 123,
-    "MAILBOX_ID": 345,
+    "SERVER_ID": 1216501295033225227,
+    "MAILBOX_ID": 1221907546177011762,
     "categories": {
-        "category1": 567,
-        "category2": 890
+        "category1": 1221907587826712738,
+        "category2": 1221907603932709006,
+        "category3": 1223358462327652474,
+        "category6": 1223370127672606760
     }
 }
