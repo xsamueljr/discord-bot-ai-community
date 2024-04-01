@@ -61,11 +61,11 @@ class ApportationView(discord.ui.View):
         msg = (
             "¡Hola!",
             "Lamentablemente, tu aportación fue rechazada. Contacta con algún administrador si crees que fue un error, o quieres saber el motivo.",
-            "Éste mensaje se borrará en 1 minuto. Sácale captura si quieres."
+            "Éste mensaje se borrará en 2 minutos. Sácale captura si quieres."
             "Te adjunto la aportación para que puedas revisarla. ¡Un saludo!"
         )
         
-        await author.send("\n\n".join(msg), embed=embed, delete_after=60)
+        await author.send("\n\n".join(msg), embed=embed, delete_after=120)
         await interaction.message.delete()
 
 
@@ -89,12 +89,6 @@ async def on_guild_join(guild: Guild) -> None:
     """Leave the guild if it's not the server."""
     if guild.id != SERVER_ID:
         await guild.leave()
-
-
-@bot.slash_command()
-async def hello(ctx, name: str = None) -> None:
-    name = name or ctx.author.name
-    await ctx.respond(f"Hello {name}!", view=ApportationView())
 
 
 @bot.slash_command(name="aportar")
