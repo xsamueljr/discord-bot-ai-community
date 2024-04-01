@@ -9,10 +9,9 @@ from discord import (
     Embed,
     Option
 )
-import discord.utils
-import discord.ui
 
 from validation import is_valid_url
+from components import ApportationView
 
 # Load config
 # .env
@@ -30,45 +29,6 @@ categories: dict[str, TextChannel] = {}
 bot: Bot = Bot()
 
 
-class ApportationView(discord.ui.View):
-    @discord.ui.button(label="Aprobar", style=discord.ButtonStyle.green)
-    async def approve(self, button: discord.ui.Button, interaction: discord.Interaction):
-        embed = interaction.message.embeds[0]
-        
-        # Getting user
-        user_id = int(embed.fields[0].value.strip("<@>"))
-        author = interaction.guild.get_member(user_id)
-        assert author is not None, f"{user_id}, {author}"
-        category = embed.fields[1].value
-        
-        channel = categories[category]
-
-        embed.remove_field(1)
-        
-        await interaction.message.delete()
-        await channel.send(embed=embed)
-        await author.add_roles(contributor_role, reason="Aportación aprobada")
-
-
-    @discord.ui.button(label="Rechazar", style=discord.ButtonStyle.red)
-    async def reject(self, button: discord.ui.Button, interaction: discord.Interaction):
-        embed = interaction.message.embeds[0]
-        author = discord.utils.get(interaction.guild.members, mention=embed.fields[0].value)
-        assert author is not None, f"{embed.fields[0].value}"
-
-        embed.remove_field(0)
-        embed.title = None
-        msg = (
-            "¡Hola!",
-            "Lamentablemente, tu aportación fue rechazada. Contacta con algún administrador si crees que fue un error, o quieres saber el motivo.",
-            "Éste mensaje se borrará en 2 minutos. Sácale captura si quieres."
-            "Te adjunto la aportación para que puedas revisarla. ¡Un saludo!"
-        )
-        
-        await author.send("\n\n".join(msg), embed=embed, delete_after=120)
-        await interaction.message.delete()
-
-
 @bot.event
 async def on_ready() -> None:
     global mailbox_channel
@@ -80,6 +40,8 @@ async def on_ready() -> None:
 
     global contributor_role
     contributor_role = bot.get_guild(SERVER_ID).get_role(1222214686695624814)
+    global apportation_view
+    apportation_view = ApportationView(categories, contributor_role)
     
     print("Ready!")
 
@@ -114,7 +76,7 @@ async def send_apportation(
     for name, value in fields:
         message.add_field(name=name, value=value, inline=False)
 
-    await mailbox_channel.send(embed=message, view=ApportationView())
+    await mailbox_channel.send(embed=message, view=apportation_view)
     await ctx.send_response("Aportación enviada con éxito.", ephemeral=True)
 
 
